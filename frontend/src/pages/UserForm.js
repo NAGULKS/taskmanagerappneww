@@ -57,7 +57,7 @@ const UserForm = () => {
         isAdmin: formData.isAdmin,
       }
 
-      await axios.post("/api/users", userData, config)
+      await axios.post("https://taskmanagerappneww.onrender.com/api/users", userData, config)
       toast.success("User created successfully")
       navigate("/users")
     } catch (error) {
