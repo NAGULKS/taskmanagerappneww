@@ -1,9 +1,9 @@
 import express from "express";
-import cors from "cors";
+import cors from "cors"; // ✅ Keep this import
 import morgan from "morgan";
 import mongoose from "mongoose";
 
-// Import your route files
+// Import routes
 import authRoutes from "./routes/authRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -14,9 +14,9 @@ import adminRoutes from "./routes/adminRoutes.js";
 const PORT = 5000;
 const FRONTEND_URL = "https://taskmanagerappneww.vercel.app";
 const MONGODB_URI = "mongodb+srv://Nagul:nagul03@shop.jkysbyh.mongodb.net/?retryWrites=true&w=majority&appName=Shop";
-const NODE_ENV = "development"; // set to 'production' on deployment
+const NODE_ENV = "development";
 
-// Connect to MongoDB Atlas
+// DB Connection
 const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
@@ -33,16 +33,12 @@ const connectDB = async () => {
 connectDB();
 
 const app = express();
-
 app.use(express.json());
 
-// CORS setup: allow only your frontend Vercel domain
-const cors = require("cors");
-const allowedOrigins = ["https://taskmanagerappneww.vercel.app"];
-
+// ✅ Setup CORS correctly
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true // only if you're using cookies/sessions
+  origin: [FRONTEND_URL],
+  credentials: true,
 }));
 
 // Mount routes
@@ -57,7 +53,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Error handling middleware
+// Error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
