@@ -1,55 +1,59 @@
-"use client"
+"use client";
 
-import { useContext, useEffect } from "react"
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom"
-import { AuthContext } from "./context/AuthContext"
+import { useContext, useEffect } from "react";
+import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 
 // Components
-import Layout from "./components/Layout"
-import PrivateRoute from "./components/PrivateRoute"
-import AdminRoute from "./components/AdminRoute"
+import Layout from "./components/Layout";
+import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
 
 // Pages
-import Dashboard from "./pages/Dashboard"
-import AdminDashboard from "./pages/AdminDashboard"
-import TaskList from "./pages/TaskList"
-import TaskForm from "./pages/TaskForm"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import UserManagement from "./pages/UserManagement"
-import UserForm from "./pages/UserForm"
-import AuditLogs from "./pages/AuditLogs"
-import Profile from "./pages/Profile"
-import NotFound from "./pages/NotFound"
-import UserTasksView from "./pages/UserTasksView"
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import TaskList from "./pages/TaskList";
+import TaskForm from "./pages/TaskForm";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import UserManagement from "./pages/UserManagement";
+import UserForm from "./pages/UserForm";
+import AuditLogs from "./pages/AuditLogs";
+import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
+import UserTasksView from "./pages/UserTasksView";
 
 function App() {
-  const { user } = useContext(AuthContext)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Handle routing based on user role
+  // Redirect based on user role on root path or user change
   useEffect(() => {
     if (user) {
-      // If user is logged in and at root path, redirect based on role
       if (location.pathname === "/") {
         if (user.isAdmin) {
-          navigate("/admin")
+          navigate("/admin");
         } else {
-          navigate("/dashboard")
+          navigate("/dashboard");
         }
       }
     }
-  }, [user, location.pathname, navigate])
+  }, [user, location.pathname, navigate]);
 
   return (
     <Routes>
-      <Route path="/login" element={!user ? <Login /> : <Navigate to={user?.isAdmin ? "/admin" : "/dashboard"} />} />
+      {/* Public routes */}
+      <Route
+        path="/login"
+        element={!user ? <Login /> : <Navigate to={user?.isAdmin ? "/admin" : "/dashboard"} />}
+      />
       <Route
         path="/register"
         element={!user ? <Register /> : <Navigate to={user?.isAdmin ? "/admin" : "/dashboard"} />}
       />
 
+      {/* Protected routes with Layout */}
       <Route
         path="/"
         element={
@@ -58,7 +62,7 @@ function App() {
           </PrivateRoute>
         }
       >
-        {/* Redirect based on user role */}
+        {/* Redirect from root */}
         <Route index element={<Navigate to={user?.isAdmin ? "/admin" : "/dashboard"} />} />
 
         {/* User routes */}
@@ -111,9 +115,10 @@ function App() {
         />
       </Route>
 
+      {/* 404 Not Found */}
       <Route path="*" element={<NotFound />} />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
