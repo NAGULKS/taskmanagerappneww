@@ -37,12 +37,13 @@ const app = express();
 app.use(express.json());
 
 // CORS setup: allow only your frontend Vercel domain
-app.use(cors({
-  origin: FRONTEND_URL,
-  credentials: true,
-}));
+const cors = require("cors");
+const allowedOrigins = ["https://taskmanagerappneww.vercel.app"];
 
-app.use(morgan("dev"));
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true // only if you're using cookies/sessions
+}));
 
 // Mount routes
 app.use("/api/auth", authRoutes);
