@@ -29,7 +29,7 @@ const UserTasksView = () => {
         },
       }
 
-      const response = await axios.get(`/api/users/${userId}`, config)
+      const response = await axios.get(`https://taskmanagerappneww.onrender.com/api/users/${userId}`, config)
       setUserData(response.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch user data")
@@ -45,7 +45,7 @@ const UserTasksView = () => {
         },
       }
 
-      const response = await axios.get(`/api/admin/user-tasks/${userId}`, config)
+      const response = await axios.get(`https://taskmanagerappneww.onrender.com/api/admin/user-tasks/${userId}`, config)
       setUserTasks(response.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch user tasks")
@@ -62,7 +62,7 @@ const UserTasksView = () => {
         },
       }
 
-      await axios.put(`/api/tasks/${id}`, { status }, config)
+      await axios.put(`https://taskmanagerappneww.onrender.com/api/tasks/${id}`, { status }, config)
       toast.success("Task status updated successfully")
       fetchUserTasks()
     } catch (error) {
