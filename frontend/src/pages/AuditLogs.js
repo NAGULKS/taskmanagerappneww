@@ -25,7 +25,7 @@ const AuditLogs = () => {
         },
       }
 
-      const response = await axios.get("/api/audit", config)
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/audit", config)
       setAuditLogs(response.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch audit logs")
