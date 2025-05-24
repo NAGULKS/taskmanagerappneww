@@ -2,11 +2,13 @@ import jwt from "jsonwebtoken"
 import User from "../models/User.js"
 import AuditLog from "../models/AuditLog.js"
 
-// Generate JWT
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  })
+// Generate JWT Token
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, isAdmin: user.isAdmin },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE }
+  )
 }
 
 // @desc    Register a new user
@@ -16,29 +18,35 @@ export const registerUser = async (req, res) => {
   try {
     const { name, email, password, isAdmin } = req.body
 
-    // Check if user exists
-    const userExists = await User.findOne({ email })
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "Name, email, and password are required" })
+    }
 
+    const userExists = await User.findOne({ email })
     if (userExists) {
       return res.status(400).json({ message: "User already exists" })
     }
 
-    // Create user
     const user = await User.create({
       name,
       email,
       password,
-      isAdmin: isAdmin || false, // Allow isAdmin flag from request
+      isAdmin: isAdmin || false,
     })
 
     if (user) {
-      // Create audit log
       await AuditLog.create({
         user: user._id,
         action: "register",
         resourceType: "user",
         resourceId: user._id,
-        details: { name, email, isAdmin },
+        details: {
+          name,
+          email,
+          isAdmin: user.isAdmin,
+          userAgent: req.headers["user-agent"]
+        },
         ipAddress: req.ip,
       })
 
@@ -48,49 +56,51 @@ export const registerUser = async (req, res) => {
         email: user.email,
         isAdmin: user.isAdmin,
         isActive: user.isActive,
-        token: generateToken(user._id),
+        token: generateToken(user),
       })
     } else {
       res.status(400).json({ message: "Invalid user data" })
     }
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: "Server error" })
   }
 }
 
-// @desc    Auth user & get token
+// @desc    Authenticate user & get token
 // @route   POST /api/auth/login
 // @access  Public
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
 
-    // Check for user email
-    const user = await User.findOne({ email }).select("+password")
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" })
+    }
 
+    const user = await User.findOne({ email }).select("+password")
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" })
     }
 
-    // Check if user is active
     if (!user.isActive) {
       return res.status(401).json({ message: "Account is deactivated" })
     }
 
-    // Check if password matches
     const isMatch = await user.matchPassword(password)
-
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" })
     }
 
-    // Create audit log
     await AuditLog.create({
       user: user._id,
       action: "login",
       resourceType: "user",
       resourceId: user._id,
       ipAddress: req.ip,
+      details: {
+        userAgent: req.headers["user-agent"]
+      },
     })
 
     res.json({
@@ -99,10 +109,11 @@ export const loginUser = async (req, res) => {
       email: user.email,
       isAdmin: user.isAdmin,
       isActive: user.isActive,
-      token: generateToken(user._id),
+      token: generateToken(user),
     })
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: "Server error" })
   }
 }
 
@@ -125,7 +136,8 @@ export const getUserProfile = async (req, res) => {
       res.status(404).json({ message: "User not found" })
     }
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: "Server error" })
   }
 }
 
@@ -146,13 +158,16 @@ export const updateUserProfile = async (req, res) => {
 
       const updatedUser = await user.save()
 
-      // Create audit log
       await AuditLog.create({
-        user: user._id,
+        user: updatedUser._id,
         action: "update",
         resourceType: "user",
-        resourceId: user._id,
-        details: { name: user.name, email: user.email },
+        resourceId: updatedUser._id,
+        details: {
+          name: updatedUser.name,
+          email: updatedUser.email,
+          userAgent: req.headers["user-agent"]
+        },
         ipAddress: req.ip,
       })
 
@@ -162,12 +177,13 @@ export const updateUserProfile = async (req, res) => {
         email: updatedUser.email,
         isAdmin: updatedUser.isAdmin,
         isActive: updatedUser.isActive,
-        token: generateToken(updatedUser._id),
+        token: generateToken(updatedUser),
       })
     } else {
       res.status(404).json({ message: "User not found" })
     }
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: "Server error" })
   }
 }
