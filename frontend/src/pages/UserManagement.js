@@ -26,7 +26,7 @@ const UserManagement = () => {
         },
       }
 
-      const response = await axios.get("/api/users", config)
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/users", config)
       setUsers(response.data)
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to fetch users")
@@ -43,7 +43,7 @@ const UserManagement = () => {
         },
       }
 
-      await axios.put(`/api/users/${id}/activate`, {}, config)
+      await axios.put(`https://taskmanagerappneww.onrender.com/api/users/${id}/activate`, {}, config)
       toast.success("User activated successfully")
       fetchUsers()
     } catch (error) {
@@ -59,7 +59,7 @@ const UserManagement = () => {
         },
       }
 
-      await axios.put(`/api/users/${id}/deactivate`, {}, config)
+      await axios.put(`https://taskmanagerappneww.onrender.com/api/users/${id}/deactivate`, {}, config)
       toast.success("User deactivated successfully")
       fetchUsers()
     } catch (error) {
