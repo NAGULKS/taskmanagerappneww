@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors"; // ✅ Keep this import
+import cors from "cors";
 import morgan from "morgan";
 import mongoose from "mongoose";
 
@@ -11,12 +11,12 @@ import auditRoutes from "./routes/auditRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
 // Config
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const FRONTEND_URL = "https://taskmanagerappneww.vercel.app";
 const MONGODB_URI = "mongodb+srv://Nagul:nagul03@shop.jkysbyh.mongodb.net/?retryWrites=true&w=majority&appName=Shop";
-const NODE_ENV = "development";
+const NODE_ENV = process.env.NODE_ENV || "development";
 
-// DB Connection
+// Connect to MongoDB Atlas
 const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
@@ -29,19 +29,21 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
-
 connectDB();
 
 const app = express();
-app.use(express.json());
 
-// ✅ Setup CORS correctly
+// Middleware
+app.use(express.json());
+app.use(morgan("dev")); // Optional: logging requests, useful for debugging
+
+// CORS setup to allow only your frontend URL
 app.use(cors({
   origin: [FRONTEND_URL],
   credentials: true,
 }));
 
-// Mount routes
+// Mount API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/users", userRoutes);
@@ -53,7 +55,7 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Error handler
+// Error handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
@@ -63,6 +65,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
