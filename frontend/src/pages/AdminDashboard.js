@@ -45,10 +45,10 @@ const AdminDashboard = () => {
 
       // Fetch all required data in parallel
       const [usersResponse, tasksResponse, userStatsResponse, recentUsersResponse] = await Promise.all([
-        axios.get("/api/users", config),
-        axios.get("/api/tasks/admin/all", config),
-        axios.get("/api/admin/user-task-stats", config),
-        axios.get("/api/admin/recent-users", config),
+        axios.get("https://taskmanagerappneww.onrender.com/api/users", config),
+        axios.get("https://taskmanagerappneww.onrender.com/api/tasks/admin/all", config),
+        axios.get("https://taskmanagerappneww.onrender.com/api/admin/user-task-stats", config),
+        axios.get("https://taskmanagerappneww.onrender.com/api/admin/recent-users", config),
       ])
 
       const users = usersResponse.data
