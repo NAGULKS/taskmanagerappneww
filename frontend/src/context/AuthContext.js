@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true)
-      const response = await axios.post(`${BACKEND_URL}/api/auth/register`, userData)
+      const response = await axios.post(`https://taskmanagerappneww.onrender.com/api/auth/register`, userData)
       const data = response.data
 
       setUser(data)
