@@ -28,16 +28,9 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect based on user role on root path or user change
   useEffect(() => {
-    if (user) {
-      if (location.pathname === "/") {
-        if (user.isAdmin) {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
-      }
+    if (user && location.pathname === "/") {
+      navigate(user.isAdmin ? "/admin" : "/dashboard", { replace: true });
     }
   }, [user, location.pathname, navigate]);
 
@@ -62,7 +55,6 @@ function App() {
           </PrivateRoute>
         }
       >
-        {/* Redirect from root */}
         <Route index element={<Navigate to={user?.isAdmin ? "/admin" : "/dashboard"} />} />
 
         {/* User routes */}
