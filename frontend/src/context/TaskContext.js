@@ -31,7 +31,7 @@ export const TaskProvider = ({ children }) => {
 
     try {
       setLoading(true)
-      const response = await axios.get("/api/tasks", getConfig())
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/tasks", getConfig())
       setTasks(response.data)
       setError(null)
     } catch (error) {
@@ -47,7 +47,7 @@ export const TaskProvider = ({ children }) => {
 
     try {
       setLoading(true)
-      const response = await axios.get("/api/tasks/due-today", getConfig())
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/tasks/due-today", getConfig())
       setTasksDueToday(response.data)
       setError(null)
     } catch (error) {
@@ -63,7 +63,7 @@ export const TaskProvider = ({ children }) => {
 
     try {
       setLoading(true)
-      const response = await axios.get("/api/tasks/completed-last-week", getConfig())
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/tasks/completed-last-week", getConfig())
       setCompletedTasksData(response.data)
       setError(null)
     } catch (error) {
@@ -79,7 +79,7 @@ export const TaskProvider = ({ children }) => {
 
     try {
       setLoading(true)
-      const response = await axios.get("/api/tasks/upcoming", getConfig())
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/tasks/upcoming", getConfig())
       setUpcomingTasks(response.data)
       setError(null)
     } catch (error) {
@@ -95,7 +95,7 @@ export const TaskProvider = ({ children }) => {
 
     try {
       setLoading(true)
-      const response = await axios.get("/api/tasks/popular-categories", getConfig())
+      const response = await axios.get("https://taskmanagerappneww.onrender.com/api/tasks/popular-categories", getConfig())
       setPopularCategories(response.data)
       setError(null)
     } catch (error) {
@@ -109,7 +109,7 @@ export const TaskProvider = ({ children }) => {
   const createTask = async (taskData) => {
     try {
       setLoading(true)
-      const response = await axios.post("/api/tasks", taskData, getConfig())
+      const response = await axios.post("https://taskmanagerappneww.onrender.com/api/tasks", taskData, getConfig())
       setTasks([...tasks, response.data])
       setError(null)
       return response.data
@@ -125,7 +125,7 @@ export const TaskProvider = ({ children }) => {
   const updateTask = async (id, taskData) => {
     try {
       setLoading(true)
-      const response = await axios.put(`/api/tasks/${id}`, taskData, getConfig())
+      const response = await axios.put(`https://taskmanagerappneww.onrender.com/api/tasks/${id}`, taskData, getConfig())
       setTasks(tasks.map((task) => (task._id === id ? response.data : task)))
       setError(null)
       return response.data
@@ -141,7 +141,7 @@ export const TaskProvider = ({ children }) => {
   const deleteTask = async (id) => {
     try {
       setLoading(true)
-      await axios.delete(`/api/tasks/${id}`, getConfig())
+      await axios.delete(`https://taskmanagerappneww.onrender.com/api/tasks/${id}`, getConfig())
       setTasks(tasks.filter((task) => task._id !== id))
       setError(null)
     } catch (error) {
@@ -156,7 +156,7 @@ export const TaskProvider = ({ children }) => {
   const getTaskById = async (id) => {
     try {
       setLoading(true)
-      const response = await axios.get(`/api/tasks/${id}`, getConfig())
+      const response = await axios.get(`https://taskmanagerappneww.onrender.com/api/tasks/${id}`, getConfig())
       setError(null)
       return response.data
     } catch (error) {
