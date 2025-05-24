@@ -1,30 +1,44 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
-import connectDB from "./config/db.js";
+import mongoose from "mongoose";
 
-// Route imports
+// Import your route files
 import authRoutes from "./routes/authRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 
-// Load env vars
-dotenv.config();
+// Config
+const PORT = 5000;
+const FRONTEND_URL = "https://taskmanagerappneww.vercel.app";
+const MONGODB_URI = "mongodb+srv://Nagul:nagul03@shop.jkysbyh.mongodb.net/?retryWrites=true&w=majority&appName=Shop";
+const NODE_ENV = "development"; // set to 'production' on deployment
 
-// Connect to database
+// Connect to MongoDB Atlas
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("MongoDB Atlas connected");
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
+  }
+};
+
 connectDB();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
 
-// CORS setup
+// CORS setup: allow only your frontend Vercel domain
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*", // Allow your Vercel domain in .env
+  origin: FRONTEND_URL,
   credentials: true,
 }));
 
@@ -37,7 +51,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/audit", auditRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Default route (optional)
+// Basic test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
@@ -48,11 +62,9 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({
     success: false,
     error: err.message || "Server Error",
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+    stack: NODE_ENV === "production" ? undefined : err.stack,
   });
 });
-
-const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
