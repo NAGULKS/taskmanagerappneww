@@ -9,7 +9,7 @@ export const AuthContext = createContext()
 const BACKEND_URL =
   process.env.NODE_ENV === "development"
     ? "http://localhost:5000" // your local backend URL
-    : "https://your-backend-domain.com" // your production backend URL
+    : "https://taskmanagerappneww.onrender.com" // your production backend URL
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true)
-      const response = await axios.post(`${BACKEND_URL}/api/auth/login`, { email, password })
+      const response = await axios.post(`https://taskmanagerappneww.onrender.com/api/auth/login`, { email, password })
       const data = response.data
 
       setUser(data)
@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }) => {
         },
       }
 
-      const response = await axios.put(`${BACKEND_URL}/api/auth/profile`, userData, config)
+      const response = await axios.put(`https://taskmanagerappneww.onrender.com/api/auth/profile`, userData, config)
       const updatedUser = { ...response.data, token: user.token }
 
       setUser(updatedUser)
